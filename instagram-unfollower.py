@@ -101,6 +101,8 @@ def procedures():
 
     json_diff()
 
+    #remove_json()
+
 
 def file_extraction():
     # Extract the zip file in the "data" folder
@@ -198,7 +200,17 @@ def json_diff():
             print(f"- {user}")
     else:
         print("\nNo unfollowed users found.")
+    
 
+def remove_json():
+    # Remove the JSON files
+    for file in os.listdir('data'):
+        if file.endswith('.json'):
+            file_path = os.path.join('data', file)
+            os.remove(file_path)
+            #print(f"[DEBUG] Deleted file: {file_path}")
+    
+    return
 
 
 if __name__ == "__main__":
