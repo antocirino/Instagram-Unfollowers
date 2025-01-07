@@ -10,7 +10,7 @@ Instagram Unfollower is a tool that helps you identify users who do not follow y
 ## Installation
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/Instagram-Unfollower.git
+    git clone https://github.com/antocirino/Instagram-Unfollowers/
     ```
 2. Navigate to the project directory:
     ```bash
