@@ -22,7 +22,7 @@ Instagram Unfollower is a tool that helps you identify users who do not follow y
 ## Usage
 1. Run the tool:
     ```bash
-    python3 instagram-unfollowers.py [-h] [-d] [-v] [-q]
+    python3 instagram-unfollowers.py [-h] [-d] [-v] [-q] [-e]
     ```
 2. Follow the on-screen instructions
 
@@ -30,7 +30,8 @@ Instagram Unfollower is a tool that helps you identify users who do not follow y
 - `-h`, `--help`     Show the help message and exit
 - `-v`, `--version`  Show program's version number and exit
 - `-d`, `--debug`    Enable debug mode
-- `-q`, `--quick`    Skip the guided procedure (the zip file must already be in the folder)
+- `-q`, `--quick`    Skip the guided procedure (the zip file must already be in the Data folder)
+- `-e`, `--export`   Export the results to a text file in the Data folder
 
 
 ## Contributing
