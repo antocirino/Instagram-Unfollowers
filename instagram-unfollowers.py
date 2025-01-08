@@ -10,6 +10,7 @@ def main():
     parser.add_argument('-d', '--debug', action='store_true', help='enable debug mode')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0')
     parser.add_argument('-q', '--quick', action='store_true', help='skip the guided procedure')
+    parser.add_argument('-e', '--export', action='store_true', help='export the results to a text file')
 
     args = parser.parse_args()
 
@@ -18,7 +19,6 @@ def main():
         return
                                                      
 
-    # Ask if the user is from Phone or PC
     while True:
         print("Are you using a Phone or a PC?")
         print("1. Phone")
@@ -36,6 +36,7 @@ def main():
             return
         else:
             print("Invalid choice. Please try again.")
+    return
 
 
 def phone_onboarding():
@@ -82,7 +83,6 @@ def pc_onboarding():
 
 
 def guided_procedures():
-
     while True:
         print("\nHave you received the email? (y/n)")
         choice = input("Enter your choice: ")
@@ -99,23 +99,34 @@ def guided_procedures():
                     procedures()
                     break
                 elif choice == "n":
-                    print("\nSave the file in the 'data' folder and try again.")            
+                    print("\nSave the file in the 'data' folder and try again.")
+                elif choice == "q" or choice == "exit":
+                    return
+                else:
+                    print("Invalid choice. Please try again.")
             break
         elif choice == "n": 
             print("\nWait for the email and try again.")
+        elif choice == "q" or choice == "exit":
+            return
+        else:
+            print("Invalid choice. Please try again.")
             
 
 def procedures():
     
+    # Extract the zip file in the "data" folder
     file_extraction()
 
+    # Move the JSON files from subdirectories to the "data" folder
     move_files()
 
+    # Delete unnecessary files
     delete_files()
 
+    # Find the difference between the two lists
     json_diff()
 
-    #remove_json()
 
 
 def file_extraction():
@@ -134,7 +145,6 @@ def file_extraction():
 
         debug_print(f"File '{zip_file}' extracted successfully.")
 
-    return
 
 def move_files():
     # Move the JSON files from subdirectories to the "data" folder
@@ -154,7 +164,6 @@ def move_files():
                     debug_print(f"File '{file}' moved successfully from '{root}' to 'data'.")
 
 
-    return
 
 def delete_files():
     # Delete unnecessary files
@@ -208,22 +217,31 @@ def json_diff():
     unfollowed = [user for user in following_list if user not in followers_list]
 
     if unfollowed:
-        print("\nUnfollowed users:")
-        for user in unfollowed:
-            print(f"- {user}")
+        if args.export:
+            download_results(unfollowed)
+        else:
+            print("\nUnfollowed users:")
+            for user in unfollowed:
+                print(f"- {user}")
     else:
         print("\nNo unfollowed users found.")
+
+def download_results(unfollowed):
+    # Download the results as a text file
+    with open('data/unfollowers.txt', 'w') as file:
+        for user in unfollowed:
+            file.write(f"{user}\n")
+    print(f"\nResults downloaded to 'unfollowers.txt' in the 'data' folder.")
     
 
 def remove_json():
-    # Remove the JSON files
+    # Remove the JSON files from the "data" folder
     for file in os.listdir('data'):
         if file.endswith('.json'):
             file_path = os.path.join('data', file)
             os.remove(file_path)
             debug_print(f"Deleted file: {file_path}")
-    
-    return
+
 
 def err_print(msg):
     RED = "\33[91m"
@@ -232,7 +250,6 @@ def err_print(msg):
     print(font)
 
 def debug_print(msg):
-
     if args.debug:
         CYAN = "\033[36m"
         END = "\033[0m"
