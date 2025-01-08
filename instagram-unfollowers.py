@@ -2,6 +2,9 @@ import zipfile
 import os
 import json
 import argparse
+import requests
+from bs4 import BeautifulSoup
+import concurrent.futures
 
 def main():
     global args
@@ -11,6 +14,7 @@ def main():
     parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0')
     parser.add_argument('-q', '--quick', action='store_true', help='skip the guided procedure')
     parser.add_argument('-e', '--export', action='store_true', help='export the results to a text file')
+    parser.add_argument('-t', '--threshold', action='store_true', help='enable the threshold to filter out users with more than 60k followers')
 
     args = parser.parse_args()
 
@@ -18,7 +22,6 @@ def main():
         procedures()
         return
                                                      
-
     while True:
         print("Are you using a Phone or a PC?")
         print("1. Phone")
@@ -128,7 +131,6 @@ def procedures():
     json_diff()
 
 
-
 def file_extraction():
     # Extract the zip file in the "data" folder
     zip_files = [f for f in os.listdir('data') if f.endswith('.zip')]
@@ -189,6 +191,48 @@ def delete_files():
                 os.rmdir(dir_path)
                 debug_print(f"Deleted empty directory: {dir_path}")
 
+def instagram_followers(username):
+
+    url = f"https://www.instagram.com/{username}/"
+    headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"}
+
+    response = requests.get(url, headers=headers)    
+    soup = BeautifulSoup(response.text, 'html.parser')
+    followers = soup.find('meta', property='og:description')
+    
+    if followers:
+
+        # If the string contains K (1000) or M (1,000,000) then convert it to an integer
+        if "K" in followers['content']:
+            followers['content'] = followers['content'].replace("K", "000").replace(".", "")
+        if "M" in followers['content']:
+            followers['content'] = followers['content'].replace("M", "000000").replace(".", "")
+
+        # If the string contains comma or dot then remove them
+        followers['content'] = followers['content'].replace(",", "")
+        followers['content'] = followers['content'].replace(".", "")
+
+        return followers['content'].split(" ")[0]
+    else:
+        return -1
+    
+def check_followers_number(followers_number, threshold):
+    if followers_number >= 60000:
+        return True
+    else:
+        return False
+    
+def filter_unfollowed(user):
+    followers_number = int(instagram_followers(user))
+
+    if followers_number == -1:
+        err_print(f"Error fetching followers number for user '{user}'.")
+        return
+
+    if not check_followers_number(followers_number, args.threshold):
+        return user
+    return None
+
 def json_diff():
     following_path = 'data/following.json'
     followers_path = 'data/followers.json'
@@ -215,6 +259,13 @@ def json_diff():
 
     # Find the difference (people who unfollowed)
     unfollowed = [user for user in following_list if user not in followers_list]
+
+    if args.threshold:
+        # Filter out users with more than n followers
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            results = list(executor.map(filter_unfollowed, unfollowed))
+        unfollowed = [user for user in results if user]
+
 
     if unfollowed:
         if args.export:
