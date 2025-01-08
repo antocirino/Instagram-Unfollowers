@@ -45,6 +45,10 @@ To follow the guided procedure and export the results:
 ```bash
 python3 instagram-unfollowers.py -e
 ```
+To skip the guided procedures (the zip file must already be in the Data folder) and to filter out users with more than 60k followers from the list
+```bash
+python3 instagram-unfollowers.py -e -t
+```
 To automatically export the results and to skip the guided procedures (the zip file must already be in the Data folder):
 ```bash
 python3 instagram-unfollowers.py -q -e
