@@ -8,6 +8,7 @@ Instagram Unfollower is a tool that helps you identify users who do not follow y
 - Simple and easy-to-use interface
 - Guided procedure
 - No authentication required
+- Results exporting
 
 ## Installation
 1. Clone the repository:
