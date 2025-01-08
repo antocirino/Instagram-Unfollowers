@@ -191,6 +191,7 @@ def delete_files():
                 os.rmdir(dir_path)
                 debug_print(f"Deleted empty directory: {dir_path}")
 
+# Doesn't work anymore
 def instagram_followers(username):
 
     url = f"https://www.instagram.com/{username}/"
@@ -216,7 +217,7 @@ def instagram_followers(username):
     else:
         return -1
     
-def check_followers_number(followers_number, threshold):
+def check_followers_number(followers_number):
     if followers_number >= 60000:
         return True
     else:
@@ -260,12 +261,11 @@ def json_diff():
     # Find the difference (people who unfollowed)
     unfollowed = [user for user in following_list if user not in followers_list]
 
+    # Filter out users with more than 60k followers
     if args.threshold:
-        # Filter out users with more than n followers
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            results = list(executor.map(filter_unfollowed, unfollowed))
-        unfollowed = [user for user in results if user]
-
+        for user in unfollowed:
+                if not filter_unfollowed(user):
+                    unfollowed.remove(user)
 
     if unfollowed:
         if args.export:
