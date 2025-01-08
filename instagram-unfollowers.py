@@ -4,6 +4,8 @@ import json
 
 def main():
     
+    banner()
+
     # Ask if the user is from Phone or PC
     while True:
         print("Are you using a Phone or a PC?")
@@ -212,6 +214,16 @@ def remove_json():
     
     return
 
+def banner():
+    font = r"""
+ _____ _____       _   _        __      _ _                            
+|_   _|  __ \     | | | |      / _|    | | |                           
+  | | | |  \/_____| | | |_ __ | |_ ___ | | | _____      _____ _ __ ___ 
+  | | | | _|______| | | | '_ \|  _/ _ \| | |/ _ \ \ /\ / / _ \ '__/ __|
+ _| |_| |_\ \     | |_| | | | | || (_) | | | (_) \ V  V /  __/ |  \__ \
+ \___/ \____/      \___/|_| |_|_| \___/|_|_|\___/ \_/\_/ \___|_|  |___/ """
+    print(font)
+    print("\t\tCopyright (c) 2025 Antonio Cirino\nc")
 
 if __name__ == "__main__":
     main()
