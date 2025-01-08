@@ -14,7 +14,7 @@ Instagram Unfollower is a tool that helps you identify users who do not follow y
     ```
 2. Navigate to the project directory:
     ```bash
-    cd Instagram-Unfollower
+    cd Instagram-Unfollowers
     ```
 
 ## Usage
