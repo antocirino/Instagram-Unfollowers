@@ -33,6 +33,16 @@ Instagram Unfollower is a tool that helps you identify users who do not follow y
 - `-q`, `--quick`    Skip the guided procedure (the zip file must already be in the Data folder)
 - `-e`, `--export`   Export the results to a text file in the Data folder
 
+### Example
+To follow the guided procedure and export the results:
+```bash
+python3 instagram-unfollowers.py -e
+```
+To automatically export the results and to skip the guided procedures (the zip file must already be in the Data folder):
+```bash
+python3 instagram-unfollowers.py -q -e
+```
+
 
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
