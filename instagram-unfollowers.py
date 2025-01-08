@@ -271,11 +271,11 @@ def json_diff():
         if args.export:
             download_results(unfollowed)
         else:
-            print("\Users who don't follow you:")
+            print("Users that don't follow you back:")
             for user in unfollowed:
                 print(f"- {user}")
     else:
-        print("\nNo users that don't follow you found.")
+        print("\nNo users that don't follow you back found.")
 
 def download_results(unfollowed):
     # Download the results as a text file
