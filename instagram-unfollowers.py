@@ -1,10 +1,22 @@
 import zipfile
 import os
 import json
+import argparse
 
 def main():
-    
-    banner()
+    global args
+
+    parser = argparse.ArgumentParser(description='Instagram\'s Unfollowers')
+    parser.add_argument('-d', '--debug', action='store_true', help='enable debug mode')
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0')
+    parser.add_argument('-q', '--quick', action='store_true', help='skip the guided procedure')
+
+    args = parser.parse_args()
+
+    if args.quick:
+        procedures()
+        return
+                                                     
 
     # Ask if the user is from Phone or PC
     while True:
@@ -110,7 +122,7 @@ def file_extraction():
     # Extract the zip file in the "data" folder
     zip_files = [f for f in os.listdir('data') if f.endswith('.zip')]
     if not zip_files:
-        print("\n[ERROR] No zip files found in the 'data' folder.")
+        err_print("No zip files found in the 'data' folder.")
         return
 
     for zip_file in zip_files:
@@ -120,7 +132,7 @@ def file_extraction():
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(extract_path)
 
-        #print(f"[DEBUG]File '{zip_file}' extracted successfully.")
+        debug_print(f"File '{zip_file}' extracted successfully.")
 
     return
 
@@ -128,7 +140,7 @@ def move_files():
     # Move the JSON files from subdirectories to the "data" folder
     extracted_folders = [f for f in os.listdir('data') if os.path.isdir(os.path.join('data', f))]
     if not extracted_folders:
-        print("\n[ERROR] No extracted folders found in the 'data' folder.")
+        err_print("No extracted folders found in the 'data' folder.")
         return
 
     for folder in extracted_folders:
@@ -139,7 +151,7 @@ def move_files():
                     json_path = os.path.join(root, file)
                     new_path = os.path.join('data', file)
                     os.rename(json_path, new_path)
-                    #print(f"[DEBUG] File '{file}' moved successfully from '{root}' to 'data'.")
+                    debug_print(f"File '{file}' moved successfully from '{root}' to 'data'.")
 
 
     return
@@ -158,7 +170,7 @@ def delete_files():
             if file not in required_files:
                 file_path = os.path.join(root, file)
                 os.remove(file_path)
-                #print(f"[DEBUG] Deleted file: {file_path}")
+                debug_print(f"Deleted file: {file_path}")
 
     # Delete empty subdirectories
     for root, dirs, _ in os.walk(data_folder, topdown=False):
@@ -166,7 +178,7 @@ def delete_files():
             dir_path = os.path.join(root, dir)
             if not os.listdir(dir_path):
                 os.rmdir(dir_path)
-                #print(f"[DEBUG] Deleted empty directory: {dir_path}")
+                debug_print(f"Deleted empty directory: {dir_path}")
 
 def json_diff():
     following_path = 'data/following.json'
@@ -174,13 +186,12 @@ def json_diff():
     followers_1_path = 'data/followers_1.json'
 
     if not os.path.exists(following_path):
-        print("\n[ERROR] 'following.json' file not found.")
+        err_print("'following.json' file is not present in the 'data' folder.")
         return
     if not os.path.exists(followers_path):
-        #print("\n[ERROR] 'followers.json' file not found.")
         followers_path = followers_1_path
         if not os.path.exists(followers_path):
-            print("\n[ERROR] 'followers.json' file not found.")
+            err_print("No JSON files found in the 'data' folder.")
             return
             
     # Load JSON data
@@ -210,9 +221,24 @@ def remove_json():
         if file.endswith('.json'):
             file_path = os.path.join('data', file)
             os.remove(file_path)
-            #print(f"[DEBUG] Deleted file: {file_path}")
+            debug_print(f"Deleted file: {file_path}")
     
     return
+
+def err_print(msg):
+    RED = "\33[91m"
+    END = "\033[0m"
+    font =f"""{RED}\n[ERROR] {msg}{END}"""
+    print(font)
+
+def debug_print(msg):
+
+    if args.debug:
+        CYAN = "\033[36m"
+        END = "\033[0m"
+        font =f"""{CYAN}\n[DEBUG] {msg}{END}"""
+        print(font)
+
 
 def banner():
     font = r"""
@@ -223,7 +249,8 @@ def banner():
  _| |_| |_\ \     | |_| | | | | || (_) | | | (_) \ V  V /  __/ |  \__ \
  \___/ \____/      \___/|_| |_|_| \___/|_|_|\___/ \_/\_/ \___|_|  |___/ """
     print(font)
-    print("\t\tCopyright (c) 2025 Antonio Cirino\nc")
+    print("\t\tCopyright (c) 2025 Antonio Cirino\n")
 
 if __name__ == "__main__":
+    banner()
     main()
