@@ -1,4 +1,5 @@
 *.txt
+!requirements.txt
 *.json
 *.zip
 .DS_Store
