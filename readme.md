@@ -25,12 +25,10 @@ Instagram Unfollower is a tool that helps you identify users who do not follow y
 2. Follow the on-screen instructions
 
 ### Optional arguments:
-    ```
-    -h, --help     Show the help message and exit
-    -v, --version  Show program's version number and exit
-    -d, --debug    Enable debug mode
-    -q, --quick    Skip the guided procedure (the zip file must already be in the folder)
-    ```
+- `-h`, `--help`     Show the help message and exit
+- `-v`, `--version`  Show program's version number and exit
+- `-d`, `--debug`    Enable debug mode
+- `-q`, `--quick`    Skip the guided procedure (the zip file must already be in the folder)
 
 
 ## Contributing
