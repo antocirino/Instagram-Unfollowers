@@ -5,6 +5,7 @@ import argparse
 import requests
 from bs4 import BeautifulSoup
 import concurrent.futures
+import sys
 
 def main():
     global args
@@ -198,9 +199,18 @@ def get_follower_count(username):
     }
 
     url = f'https://www.instagram.com/api/v1/users/web_profile_info/?username={username}'
-    response = requests.get(url, headers=headers)
     
-    return response.json()['data']['user']['edge_followed_by']['count']
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+    except requests.exceptions.RequestException:
+        err_print(f"You have reached the maximum number of requests. Please try again in a few hours.")
+        info_print("You can run python3 instagram-unfollowers.py without -t to disable the threshold and check the users that don't follow you back.")
+        sys.exit()
+        return 0
+    except KeyError:
+        err_print(f"Unexpected response structure for user {username}")
+        return 0
     
 def check_followers_number(followers_number):
     # 60k is the threshold, you can change it to any number you want
@@ -235,6 +245,7 @@ def json_diff():
 
     # Filter out users with more than 60k followers using multithreading
     if args.threshold:
+        info_print("Filtering out users with more than 60k followers...")
         with concurrent.futures.ThreadPoolExecutor() as executor:
             results = list(executor.map(get_follower_count, unfollowed))
         
@@ -280,6 +291,11 @@ def debug_print(msg):
         font =f"""{CYAN}\n[DEBUG] {msg}{END}"""
         print(font)
 
+def info_print(msg):
+    BLUE = "\033[94m"
+    END = "\033[0m"
+    font =f"""{BLUE}\n[INFO] {msg}{END}"""
+    print(font)
 
 def banner():
     font = r"""
