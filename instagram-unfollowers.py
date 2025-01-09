@@ -190,49 +190,21 @@ def delete_files():
             if not os.listdir(dir_path):
                 os.rmdir(dir_path)
                 debug_print(f"Deleted empty directory: {dir_path}")
-
-# Doesn't work anymore
-def instagram_followers(username):
-
-    url = f"https://www.instagram.com/{username}/"
-    headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"}
-
-    response = requests.get(url, headers=headers)    
-    soup = BeautifulSoup(response.text, 'html.parser')
-    followers = soup.find('meta', property='og:description')
     
-    if followers:
+    
+def get_follower_count(username):
+    headers = {
+        'x-ig-app-id': '936619743392459'
+    }
 
-        # If the string contains K (1000) or M (1,000,000) then convert it to an integer
-        if "K" in followers['content']:
-            followers['content'] = followers['content'].replace("K", "000").replace(".", "")
-        if "M" in followers['content']:
-            followers['content'] = followers['content'].replace("M", "000000").replace(".", "")
-
-        # If the string contains comma or dot then remove them
-        followers['content'] = followers['content'].replace(",", "")
-        followers['content'] = followers['content'].replace(".", "")
-
-        return followers['content'].split(" ")[0]
-    else:
-        return -1
+    url = f'https://www.instagram.com/api/v1/users/web_profile_info/?username={username}'
+    response = requests.get(url, headers=headers)
+    
+    return response.json()['data']['user']['edge_followed_by']['count']
     
 def check_followers_number(followers_number):
-    if followers_number >= 60000:
-        return True
-    else:
-        return False
-    
-def filter_unfollowed(user):
-    followers_number = int(instagram_followers(user))
-
-    if followers_number == -1:
-        err_print(f"Error fetching followers number for user '{user}'.")
-        return
-
-    if not check_followers_number(followers_number, args.threshold):
-        return user
-    return None
+    # 60k is the threshold, you can change it to any number you want
+    return followers_number >= 60000
 
 def json_diff():
     following_path = 'data/following.json'
@@ -261,11 +233,12 @@ def json_diff():
     # Find the difference (people who unfollowed)
     unfollowed = [user for user in following_list if user not in followers_list]
 
-    # Filter out users with more than 60k followers
+    # Filter out users with more than 60k followers using multithreading
     if args.threshold:
-        for user in unfollowed:
-                if not filter_unfollowed(user):
-                    unfollowed.remove(user)
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            results = list(executor.map(get_follower_count, unfollowed))
+        
+        unfollowed = [user for user, count in zip(unfollowed, results) if not check_followers_number(count)]
 
     if unfollowed:
         if args.export:
