@@ -19,7 +19,10 @@ Instagram Unfollower is a tool that helps you identify users who do not follow y
 2. Navigate to the project directory:
     ```bash
     cd Instagram-Unfollowers
-3. Install the required dependencies:
+    ```
+3. Install Python. You can download it from the [official website](https://python.org/downloads/).
+
+4. Install the required dependencies:
     ```bash
     python3 -m pip install -r requirements.txt
     ```
