@@ -103,18 +103,18 @@ def guided_procedures():
                     procedures()
                     break
                 elif choice == "n":
-                    print("\nSave the file in the 'data' folder and try again.")
+                    info_print("\nSave the file in the 'data' folder and try again.")
                 elif choice == "q" or choice == "exit":
                     return
                 else:
-                    print("Invalid choice. Please try again.")
+                    err_print("Invalid choice. Please try again.")
             break
         elif choice == "n": 
-            print("\nWait for the email and try again.")
+            info_print("Wait for the email and try again.")
         elif choice == "q" or choice == "exit":
             return
         else:
-            print("Invalid choice. Please try again.")
+            err_print("Invalid choice. Please try again.")
             
 
 def procedures():
