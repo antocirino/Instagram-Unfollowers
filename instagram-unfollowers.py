@@ -75,7 +75,7 @@ def pc_onboarding():
         "Scorri fino alla sezione Contatti e spunta Follower e persone/Pagine seguite",
         "Premere su Avanti",
         "Scarica sul dispositivo",
-        "Come Intervallo di date scegliere Dall’inizio.",
+        "Come Intervallo di date scegliere Sempre.",
         "Impostare il formato su JSON e la Qualità dei contenuti multimediali su Bassa",
         "Premere su Crea file e aspettare la mail di conferma"
     ]
