@@ -92,14 +92,19 @@ def guided_procedures():
         choice = input("Enter your choice: ")
 
         if choice == "y":
+
+            # Alert the user if the "data" folder is not empty
+            remove_precedent_files()
+
             print("\n1. Apri la mail e scarica il file premendo Scarica le tue informazioni.")
             print("2. Salva il file nella cartella del progetto denominata 'data'.")
             
             while True:
-                print("\nHave you saved the file in the 'data' folder? (y/n)")
+                print("\nHave you saved the file in the 'Data' folder? (y/n)")
                 choice = input("Enter your choice: ")
 
                 if choice == "y":
+
                     procedures()
                     break
                 elif choice == "n":
