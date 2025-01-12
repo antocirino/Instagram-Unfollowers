@@ -3,3 +3,4 @@
 *.json
 *.zip
 .DS_Store
+/Lib/
