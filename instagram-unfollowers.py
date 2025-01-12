@@ -132,6 +132,35 @@ def procedures():
     json_diff()
 
 
+def remove_precedent_files(): 
+
+    # Verify if the "data" folder has files and alert the user
+    if os.path.exists('data') and os.listdir('data'):
+        while True:
+            info_print("The 'Data' folder is not empty. To proceed, the Data folder must be empty. Do you want to delete the files? (y/n)")
+            choice = input("Enter your choice: ")
+
+            if choice == "y":
+                # If the "data" folder has files or subdirectories or both, delete them
+                for root, dirs, files in os.walk('data', topdown=False):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        os.remove(file_path)
+                        debug_print(f"Deleted file: {file_path}")
+                    for dir in dirs:
+                        dir_path = os.path.join(root, dir)
+                        os.rmdir(dir_path)
+                        debug_print(f"Deleted directory: {dir_path}")
+
+                break
+            elif choice == "n":
+                return
+            elif choice == "q" or choice == "exit":
+                    return
+            else:
+                err_print("Invalid choice. Please try again.")
+
+
 def file_extraction():
     # Extract the zip file in the "data" folder
     zip_files = [f for f in os.listdir('data') if f.endswith('.zip')]
