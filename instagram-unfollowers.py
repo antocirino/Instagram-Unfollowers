@@ -74,6 +74,8 @@ def phone_onboarding():
     for i, step in enumerate(steps, 1):
         print(f"{i}. {step}")
         
+    print("\n")
+
     guided_procedures()
 
 def pc_onboarding():
@@ -93,6 +95,8 @@ def pc_onboarding():
 
     for i, step in enumerate(steps, 1):
         print(f"{i}. {step}")
+    
+    print("\n")
 
     guided_procedures()
 
@@ -102,29 +106,42 @@ def guided_procedures():
     while True:
 
         email = False
-        email = inquirer.confirm(message="Have you received the email?", default=True).execute()
+        try:
+            email = inquirer.confirm(message="Have you received the email?", default=True, raise_keyboard_interrupt=True).execute()
+        except KeyboardInterrupt:
+            info_print("Process interrupted. Exiting...")
+            sys.exit()
 
         if email:
 
+            print("\n")
             # Alert the user if the "data" folder is not empty
             remove_precedent_files()
 
             print("\n1. Apri la mail e scarica il file premendo Scarica le tue informazioni.")
             print("2. Salva il file nella cartella del progetto denominata 'data'.")
+            print("\n")
             
             while True:
 
                 saved = False
-                saved = inquirer.confirm(message="Have you saved the file in the 'Data' folder?", default=True).execute()
+                try:
+                    saved = inquirer.confirm(message="Have you saved the file in the Data folder?", default=True, raise_keyboard_interrupt=True).execute()
+                except KeyboardInterrupt:
+                    info_print("Process interrupted. Exiting...")
+                    sys.exit()
 
                 if saved:
+                    print("\n")
                     procedures()
                     break
                 else:
-                    info_print("Save the file in the 'data' folder and try again.")
+                    print("\n")
+                    info_print("Save the file in the Data folder and try again.")
             break
         else:
             info_print("Wait for the email and try again.")
+            print("\n")
 
             
 
