@@ -6,8 +6,20 @@ import requests
 from bs4 import BeautifulSoup
 import concurrent.futures
 import sys
+from InquirerPy import inquirer
+from InquirerPy.base.control import Choice
+from InquirerPy.separator import Separator
+from rich.console import Console
+
+platform_choice = [
+    Choice("phone", name="Phone"),
+    Choice("pc", name="PC"),
+    Choice("EXIT", name="Exit"),
+]
+
 
 def main():
+
     global args
 
     parser = argparse.ArgumentParser(description='Instagram\'s Unfollowers')
@@ -22,25 +34,24 @@ def main():
     if args.quick:
         procedures()
         return
-                                                     
-    while True:
-        print("Are you using a Phone or a PC?")
-        print("1. Phone")
-        print("2. PC")
-        print("3. Exit")
-        choice = int(input("Enter your choice: "))
 
-        if choice == 1:
-            phone_onboarding()
-            break
-        elif choice == 2:
-            pc_onboarding()
-            break
-        elif choice == 3:
-            return
-        else:
-            print("Invalid choice. Please try again.")
-    return
+
+    platform = inquirer.select(
+        message="Select your platform: ",
+        choices=platform_choice,
+        cycle=True,
+        border=True,
+        invalid_message="Select an option",
+        mandatory=True,
+        mandatory_message="Select an option",
+    ).execute()
+
+    if platform == "phone":
+        phone_onboarding()
+    elif platform == "pc":
+        pc_onboarding()
+    elif platform == "EXIT":
+        return
 
 
 def phone_onboarding():
@@ -87,11 +98,13 @@ def pc_onboarding():
 
 
 def guided_procedures():
+    
     while True:
-        print("\nHave you received the email? (y/n)")
-        choice = input("Enter your choice: ")
 
-        if choice == "y":
+        email = False
+        email = inquirer.confirm(message="Have you received the email?", default=True).execute()
+
+        if email:
 
             # Alert the user if the "data" folder is not empty
             remove_precedent_files()
@@ -100,26 +113,19 @@ def guided_procedures():
             print("2. Salva il file nella cartella del progetto denominata 'data'.")
             
             while True:
-                print("\nHave you saved the file in the 'Data' folder? (y/n)")
-                choice = input("Enter your choice: ")
 
-                if choice == "y":
+                saved = False
+                saved = inquirer.confirm(message="Have you saved the file in the 'Data' folder?", default=True).execute()
 
+                if saved:
                     procedures()
                     break
-                elif choice == "n":
-                    info_print("\nSave the file in the 'data' folder and try again.")
-                elif choice == "q" or choice == "exit":
-                    return
                 else:
-                    err_print("Invalid choice. Please try again.")
+                    info_print("Save the file in the 'data' folder and try again.")
             break
-        elif choice == "n": 
-            info_print("Wait for the email and try again.")
-        elif choice == "q" or choice == "exit":
-            return
         else:
-            err_print("Invalid choice. Please try again.")
+            info_print("Wait for the email and try again.")
+
             
 
 def procedures():
@@ -142,10 +148,11 @@ def remove_precedent_files():
     # Verify if the "data" folder has files and alert the user
     if os.path.exists('data') and os.listdir('data'):
         while True:
-            info_print("The 'Data' folder is not empty. To proceed, the Data folder must be empty. Do you want to delete the files? (y/n)")
-            choice = input("Enter your choice: ")
 
-            if choice == "y":
+            delete = False
+            delete = inquirer.confirm(message="The 'Data' folder is not empty. To proceed, the Data folder must be empty. Do you want to delete the files?").execute()
+
+            if delete:
                 # If the "data" folder has files or subdirectories or both, delete them
                 for root, dirs, files in os.walk('data', topdown=False):
                     for file in files:
@@ -158,12 +165,8 @@ def remove_precedent_files():
                         debug_print(f"Deleted directory: {dir_path}")
 
                 break
-            elif choice == "n":
-                return
-            elif choice == "q" or choice == "exit":
-                    return
             else:
-                err_print("Invalid choice. Please try again.")
+                return
 
 
 def file_extraction():
@@ -313,23 +316,18 @@ def remove_json():
 
 
 def err_print(msg):
-    RED = "\33[91m"
-    END = "\033[0m"
-    font =f"""{RED}\n[ERROR] {msg}{END}"""
-    print(font)
+    console = Console()
+    console.print(f"[bold white on red] ERROR [/bold white on red] {msg}")
+
 
 def debug_print(msg):
     if args.debug:
-        CYAN = "\033[36m"
-        END = "\033[0m"
-        font =f"""{CYAN}\n[DEBUG] {msg}{END}"""
-        print(font)
+        console = Console()
+        console.print(f"[bold black on white] DEBUG [/bold black on white] {msg}")
 
 def info_print(msg):
-    BLUE = "\033[94m"
-    END = "\033[0m"
-    font =f"""{BLUE}\n[INFO] {msg}{END}"""
-    print(font)
+    console = Console()
+    console.print(f"[bold white on blue] INFO [/bold white on blue] {msg}")
 
 def banner():
     font = r"""
