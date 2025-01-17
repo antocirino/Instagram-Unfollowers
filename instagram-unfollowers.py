@@ -370,7 +370,6 @@ def success_print(msg):
     console.print(f"[bold black on green3] SUCCESS [/bold black on green3] {msg}")
 
 def enabled_mode():
-
     console = Console()
     modes = []
     if args.debug:
@@ -382,9 +381,10 @@ def enabled_mode():
     if args.quick:
         modes.append("QUICK")
 
-    mode_text = "Mode: " + ", ".join(modes)
-    console.print(Panel(mode_text, style="bold bright_black"))
-    print("\n")
+    if modes:
+        mode_text = "Mode: " + ", ".join(modes)
+        console.print(Panel(mode_text, style="bold bright_black"))
+        print("\n")
 
 def banner():
     font = r"""
