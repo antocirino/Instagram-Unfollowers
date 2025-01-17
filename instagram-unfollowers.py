@@ -153,8 +153,7 @@ def guided_procedures():
         else:
             info_print("Wait for the email and try again.")
             print("\n")
-
-            
+     
 
 def procedures():
     
@@ -232,7 +231,6 @@ def move_files():
                     debug_print(f"File '{file}' moved successfully from '{root}' to 'data'.")
 
 
-
 def delete_files():
     # Delete unnecessary files
     # The only files needed are:
@@ -277,9 +275,11 @@ def get_follower_count(username):
         err_print(f"Unexpected response structure for user {username}")
         return 0
     
+
 def check_followers_number(followers_number):
     # 60k is the threshold, you can change it to any number you want
     return followers_number >= 60000
+
 
 def json_diff():
     following_path = 'data/following.json'
@@ -334,6 +334,7 @@ def json_diff():
     else:
         success_print("No users that don't follow you back found.")
 
+
 def download_results(unfollowed):
     # Download the results as a text file
     with open('data/unfollowers.txt', 'w') as file:
@@ -355,7 +356,6 @@ def err_print(msg):
     console = Console()
     console.print(f"[bold white on red] ERROR [/bold white on red] {msg}")
 
-
 def debug_print(msg):
     if args.debug:
         console = Console()
@@ -368,6 +368,7 @@ def info_print(msg):
 def success_print(msg):
     console = Console()
     console.print(f"[bold black on green3] SUCCESS [/bold black on green3] {msg}")
+
 
 def enabled_mode():
     console = Console()
@@ -385,6 +386,7 @@ def enabled_mode():
         mode_text = "Mode: " + ", ".join(modes)
         console.print(Panel(mode_text, style="bold bright_black"))
         print("\n")
+
 
 def banner():
     font = r"""
