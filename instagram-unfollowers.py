@@ -1,16 +1,24 @@
-import zipfile
-import os
-import json
-import argparse
-import requests
-from bs4 import BeautifulSoup
-import concurrent.futures
-import sys
-from InquirerPy import inquirer
-from InquirerPy.base.control import Choice
-from InquirerPy.separator import Separator
-from rich.console import Console
-from rich.panel import Panel
+try:
+    import zipfile
+    import os
+    import json
+    import argparse
+    import requests
+    from bs4 import BeautifulSoup
+    import concurrent.futures
+    import sys
+    from InquirerPy import inquirer
+    from InquirerPy.base.control import Choice
+    from InquirerPy.separator import Separator
+    from rich.console import Console
+    from rich.panel import Panel
+except ImportError as e:
+    print(f"An error occurred while importing the required modules: {e}")
+    sys.exit()
+except ModuleNotFoundError as e:
+    print(f"An error occurred while importing the required modules: {e}")
+    sys.exit()
+
 
 platform_choice = [
     Choice("phone", name="Phone"),
