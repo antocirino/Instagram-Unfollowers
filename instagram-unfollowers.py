@@ -346,6 +346,27 @@ def info_print(msg):
     console = Console()
     console.print(f"[bold white on blue] INFO [/bold white on blue] {msg}")
 
+def success_print(msg):
+    console = Console()
+    console.print(f"[bold black on green3] SUCCESS [/bold black on green3] {msg}")
+
+def enabled_mode():
+
+    console = Console()
+    modes = []
+    if args.debug:
+        modes.append("DEBUG")
+    if args.export:
+        modes.append("EXPORT")
+    if args.threshold:
+        modes.append("THRESHOLD")
+    if args.quick:
+        modes.append("QUICK")
+
+    mode_text = "Mode: " + ", ".join(modes)
+    console.print(Panel(mode_text, style="bold bright_black"))
+    print("\n")
+
 def banner():
     font = r"""
  _____ _____       _   _        __      _ _                            
