@@ -10,6 +10,7 @@ from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 from InquirerPy.separator import Separator
 from rich.console import Console
+from rich.panel import Panel
 
 platform_choice = [
     Choice("phone", name="Phone"),
@@ -31,20 +32,26 @@ def main():
 
     args = parser.parse_args()
 
+    enabled_mode()
+
     if args.quick:
         procedures()
         return
 
-
-    platform = inquirer.select(
-        message="Select your platform: ",
-        choices=platform_choice,
-        cycle=True,
-        border=True,
-        invalid_message="Select an option",
-        mandatory=True,
-        mandatory_message="Select an option",
-    ).execute()
+    try:
+        platform = inquirer.select(
+            message="Select your platform: ",
+            choices=platform_choice,
+            invalid_message="Select an option",
+            border=True,
+            show_cursor=False,
+            raise_keyboard_interrupt=True,
+            mandatory=True,
+            mandatory_message="Select an option",
+        ).execute()
+    except KeyboardInterrupt:
+        info_print("Process interrupted. Exiting...")
+        sys.exit()
 
     if platform == "phone":
         phone_onboarding()
@@ -55,7 +62,7 @@ def main():
 
 
 def phone_onboarding():
-    print("\nFollow the steps below to download your Instagram data.\n")
+    print("Follow the steps below to download your Instagram data.\n")
     steps = [
         "Apri Instagram",
         "Vai nel profilo",
@@ -73,13 +80,11 @@ def phone_onboarding():
 
     for i, step in enumerate(steps, 1):
         print(f"{i}. {step}")
-        
-    print("\n")
 
     guided_procedures()
 
 def pc_onboarding():
-    print("\nFollow the steps below to download your Instagram data.\n")
+    print("Follow the steps below to download your Instagram data.\n")
     steps = [
         "Visita il link https://accountscenter.instagram.com/info_and_permissions/",
         "Accedi con le tue credenziali",
@@ -95,13 +100,13 @@ def pc_onboarding():
 
     for i, step in enumerate(steps, 1):
         print(f"{i}. {step}")
-    
-    print("\n")
 
     guided_procedures()
 
 
 def guided_procedures():
+
+    print("\n")
     
     while True:
 
@@ -114,13 +119,11 @@ def guided_procedures():
 
         if email:
 
-            print("\n")
             # Alert the user if the "data" folder is not empty
             remove_precedent_files()
 
             print("\n1. Apri la mail e scarica il file premendo Scarica le tue informazioni.")
             print("2. Salva il file nella cartella del progetto denominata 'data'.")
-            print("\n")
             
             while True:
 
@@ -190,7 +193,7 @@ def file_extraction():
     # Extract the zip file in the "data" folder
     zip_files = [f for f in os.listdir('data') if f.endswith('.zip')]
     if not zip_files:
-        err_print("No zip files found in the 'data' folder.")
+        err_print("No zip files found in the Data folder.")
         return
 
     for zip_file in zip_files:
@@ -207,7 +210,7 @@ def move_files():
     # Move the JSON files from subdirectories to the "data" folder
     extracted_folders = [f for f in os.listdir('data') if os.path.isdir(os.path.join('data', f))]
     if not extracted_folders:
-        err_print("No extracted folders found in the 'data' folder.")
+        err_print("No extracted folders found in the Data folder.")
         return
 
     for folder in extracted_folders:
@@ -276,12 +279,19 @@ def json_diff():
     followers_1_path = 'data/followers_1.json'
 
     if not os.path.exists(following_path):
-        err_print("'following.json' file is not present in the 'data' folder.")
+        err_print("No JSON files found in the Data folder.")
+        if not args.debug:
+            info_print("For more information, run the script with the -d flag.")
+        debug_print("following.json file is not present in the Data folder.")
         return
     if not os.path.exists(followers_path):
         followers_path = followers_1_path
+        debug_print("followers.json file is not present in the Data folder.")
         if not os.path.exists(followers_path):
-            err_print("No JSON files found in the 'data' folder.")
+            err_print("No JSON files found in the Data folder.")
+            if not args.debug:
+                info_print("For more information, run the script with the -d flag.")
+            debug_print("followers_1.json file is not present in the Data folder.")
             return
             
     # Load JSON data
@@ -309,18 +319,19 @@ def json_diff():
         if args.export:
             download_results(unfollowed)
         else:
+            success_print("Successfully found users that don't follow you back.")
             print("Users that don't follow you back:")
             for user in unfollowed:
                 print(f"- {user}")
     else:
-        print("\nNo users that don't follow you back found.")
+        success_print("No users that don't follow you back found.")
 
 def download_results(unfollowed):
     # Download the results as a text file
     with open('data/unfollowers.txt', 'w') as file:
         for user in unfollowed:
             file.write(f"{user}\n")
-    print(f"\nResults downloaded to 'unfollowers.txt' in the 'data' folder.")
+    success_print("Results downloaded to unfollowers.txt in the Data folder.")
     
 
 def remove_json():
@@ -377,6 +388,7 @@ def banner():
  \___/ \____/      \___/|_| |_|_| \___/|_|_|\___/ \_/\_/ \___|_|  |___/ """
     print(font)
     print("\t\tCopyright (c) 2025 Antonio Cirino\n")
+
 
 if __name__ == "__main__":
     banner()
